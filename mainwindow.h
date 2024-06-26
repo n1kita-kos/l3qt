@@ -45,6 +45,7 @@ private slots:
     void on_upgrade3_clicked();
     void onUpgradeTimeout();
     void on_exit_triggered();
+    void onAnimationFinished();
 
 private:
     Ui::MainWindow *ui;
