@@ -17,6 +17,7 @@
 #include <QStringList>
 #include <QPropertyAnimation>
 #include <QTimer>
+#include <QIcon>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -43,6 +44,7 @@ private slots:
 
     void on_upgrade3_clicked();
     void onUpgradeTimeout();
+    void on_exit_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -50,13 +52,16 @@ private:
     QTimer *holdTimer;
     QTimer *displayTimer;
     QTimer *upgradeTimer;
+    QIcon ic1;
     bool isAnimationStarted;
-    int score = 0;
-    int n = 1;
-    int k=1;
-    int cost =100;
-    int cost2=10;
-    int cost3=10;
+    bool upgr=true;
+    bool aut=false;
+    long long score = 0;
+    long long n = 1;
+    long long k=1;
+    long long cost =100;
+    long long cost2=10000;
+    long long cost3=100;
     QFont font;
 };
 
