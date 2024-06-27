@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pushButton->setFlat(true);
     ui->pushButton->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
 
-   this->setStyleSheet("QWidget#centralwidget { border-image: url(:/images/money.jfif) 0 0 0 0 stretch stretch; }");
+   this->setStyleSheet("QWidget#centralwidget { background-color: rgb(255, 255, 224); }");
 
     animation = new QPropertyAnimation(ui->warning, "geometry");
     animation->setDuration(3000);
@@ -29,14 +29,14 @@ MainWindow::MainWindow(QWidget *parent)
     holdTimer->setSingleShot(true);
 
     displayTimer = new QTimer(this);
-    displayTimer->setInterval(100);  // 0.1 секунды
+    displayTimer->setInterval(100);
     displayTimer->setSingleShot(true);
     connect(displayTimer, &QTimer::timeout, this, &MainWindow::hidePlusLabel);
 
     connect(holdTimer, &QTimer::timeout, this, &MainWindow::onHoldTimeout);
 
-    upgradeTimer = new QTimer(this);  // Новый таймер для апгрейда
-    upgradeTimer->setInterval(1000);  // Каждую секунду
+    upgradeTimer = new QTimer(this);
+    upgradeTimer->setInterval(1000);
 
     connect(upgradeTimer, &QTimer::timeout, this, &MainWindow::onUpgradeTimeout);
     connect(ui->exit, &QAction::triggered, this, &MainWindow::on_exit_triggered);
