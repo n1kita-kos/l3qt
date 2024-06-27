@@ -12,6 +12,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->score->setFont(font);
     ui->score->setText(QString::number(score));
 
+    ui->pushButton->setFlat(true);
+    ui->pushButton->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
+
+   this->setStyleSheet("QWidget#centralwidget { border-image: url(:/images/money.jfif) 0 0 0 0 stretch stretch; }");
+
     animation = new QPropertyAnimation(ui->warning, "geometry");
     animation->setDuration(3000);
     animation->setStartValue(QRect(400, 580, 800, 50));
@@ -130,36 +135,43 @@ void MainWindow::on_upgrade_clicked()
 
 void MainWindow::on_upgrade2_clicked()
 {
-    bool ok;
-    long long c2;
-    c2 = (ui->pr2->text()).toLongLong(&ok);
-    if (upgr && score >= c2) {
-        upgr = false;
-        if (score >= c2) {
-            score -= c2;
-            ui->score->setText(QString::number(score));
-            c2 *= 2;
-            ui->pr2->setText(QString::number(c2));
+    if(aut1){
+        bool ok;
+        long long c2;
+        aut1=false;
+        c2 = (ui->pr2->text()).toLongLong(&ok);
+        if (upgr && score >= c2) {
+            upgr = false;
+            if (score >= c2) {
+                score -= c2;
+                ui->score->setText(QString::number(score));
+                c2 *= 2;
+                ui->pr2->setText(QString::number(c2));
 
-            if (!upgradeTimer->isActive()) {
-                upgradeTimer->start();  // Запускаем таймер, если он еще не запущен
+                if (!upgradeTimer->isActive()) {
+                    upgradeTimer->start();
+                }
             }
-        }
 
-        ui->upgrade2->setText("");
-        ui->upgrade2->setIcon(ic1);
-        ui->upgrade2->setIconSize(QSize(81, 81));
-        ui->pr2->setText("-");
-        ui->autoplus->setFont(font);
-        ui->autoplus->setText(QString::number(k) + " auto");
-        aut = true;
-    } else {
-        QFont f3;
-        long long a = (c2 - score);
-        f3.setPointSize(24);
+            ui->upgrade2->setText("");
+            ui->upgrade2->setIcon(ic1);
+            ui->upgrade2->setIconSize(QSize(81, 81));
+            ui->pr2->setText("-");
+            ui->autoplus->setFont(font);
+            ui->autoplus->setText(QString::number(k) + " auto");
+            aut = true;
+        } else {
+            QFont f3;
+            long long a = (c2 - score);
+            f3.setPointSize(24);
+            ui->warning->show();
+            ui->warning->setFont(f3);
+            ui->warning->setText("You need " + QString::number(a));
+            animation->start();
+        }
+    }else{
         ui->warning->show();
-        ui->warning->setFont(f3);
-        ui->warning->setText("You need " + QString::number(a));
+        ui->warning->setText("You have already bought auto.");
         animation->start();
     }
 }
@@ -199,7 +211,7 @@ void MainWindow::on_upgrade3_clicked()
 
 void MainWindow::onUpgradeTimeout()
 {
-    score += k;  // Увеличиваем score на k каждую секунду
+    score += k;
     ui->score->setText(QString::number(score));
 }
 

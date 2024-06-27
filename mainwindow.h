@@ -57,6 +57,7 @@ private:
     bool isAnimationStarted;
     bool upgr=true;
     bool aut=false;
+    bool aut1=true;
     long long score = 0;
     long long n = 1;
     long long k=1;
@@ -66,4 +67,4 @@ private:
     QFont font;
 };
 
-#endif // MAINWINDOW_H
+#endif
