@@ -13,13 +13,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->score->setFont(font);
     ui->score->setText(QString::number(score));
 
-    //основная кнопка прозрачная, остальные белые
+    //основная кнопка и fire прозрачные, остальные белые
     ui->pushButton->setFlat(true);
     ui->pushButton->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
     ui->upgrade->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->upgrade2->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->upgrade3->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->upgrade4->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->fire->setFlat(true);
+    ui->fire->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
 
     //фон основного окна
     this->setStyleSheet("QWidget#centralwidget { background-color: rgb(224, 255, 255); }");
@@ -45,7 +47,13 @@ MainWindow::MainWindow(QWidget *parent)
     displayTimer->setSingleShot(true);
     connect(displayTimer, &QTimer::timeout, this, &MainWindow::hidePlusLabel);
 
-   //таймер на автокликер
+    //таймер к огонькам на экране
+    displayTimer2 = new QTimer(this);
+    displayTimer2->setInterval(100);
+    displayTimer2->setSingleShot(true);
+    connect(displayTimer2, &QTimer::timeout, this, &MainWindow::hidefire);
+
+    //таймер на автокликер
     upgradeTimer = new QTimer(this);
     upgradeTimer->setInterval(1000);
     connect(upgradeTimer, &QTimer::timeout, this, &MainWindow::onUpgradeTimeout);
@@ -58,6 +66,16 @@ MainWindow::MainWindow(QWidget *parent)
     upgr2->setInterval(10000);
     connect(upgr2, &QTimer::timeout, this, &MainWindow::onUpgr2out);
 
+    //таймер для буста_1
+    upgr2_1 = new QTimer(this);
+    upgr2_1->setInterval(1000);
+    connect(upgr2_1, &QTimer::timeout, this, &MainWindow::ont_1);
+
+    //таймер для буста_1_1
+    upgr2_1_1 = new QTimer(this);
+    upgr2_1_1->setInterval(100);
+    connect(upgr2_1_1, &QTimer::timeout, this, &MainWindow::ont_1_1);
+
     //расставляю стоимость улучшений
     ui->pr1->setFont(font);
     ui->pr1->setText(QString::number(cost));
@@ -69,7 +87,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pr4->setText(QString::number(cost4));
 
     //иконка покупки автокликера
-    ic1.addFile(":/images/checkmark3.png", QSize(100,100));
+    ic1.addFile(":/images/checkmark3.png", QSize(100, 100));
+    //иконка при покупке буста
+    ic2.addFile(":/images/c5.png", QSize(75, 75));
+    ui->fire->hide();
+
 }
 
 MainWindow::~MainWindow()
@@ -84,6 +106,15 @@ void MainWindow::on_exit_triggered()
 
 void MainWindow::on_pushButton_clicked()
 {
+    if(bustb){
+        ui->fire->setIcon(ic2);
+        QPoint pp1;
+        pp1.setX(rand() % 1000);
+        pp1.setY(rand() % 750);
+        ui->fire->move(pp1);
+        ui->fire->show();
+        displayTimer2->start();
+    }
     ui->warning->hide();
     score += n;
     ui->score->setFont(font);
@@ -132,6 +163,10 @@ void MainWindow::hidePlusLabel()
     ui->plus->hide();
 }
 
+void MainWindow::hidefire(){
+    ui->fire->hide();
+}
+
 void MainWindow::on_upgrade_clicked()
 {
     bool ok;
@@ -160,9 +195,9 @@ void MainWindow::on_upgrade2_clicked()
     bool ok;
     long long c2;
     c2 = (ui->pr2->text()).toLongLong(&ok);
-    if(score>=c2){
-        if(aut1){
-            aut1=false;
+    if (score >= c2) {
+        if (aut1) {
+            aut1 = false;
             if (upgr && score >= c2) {
                 upgr = false;
                 if (score >= c2) {
@@ -192,12 +227,15 @@ void MainWindow::on_upgrade2_clicked()
                 ui->warning->setText("You need " + QString::number(a));
                 animation->start();
             }
-        }else{
+        } else {
+            QFont f3;
+            f3.setPointSize(24);
             ui->warning->show();
+            ui->warning->setFont(f3);
             ui->warning->setText("You have already bought auto.");
             animation->start();
         }
-    }else{
+    } else {
         QFont f3;
         long long a = (c2 - score);
         f3.setPointSize(24);
@@ -254,20 +292,33 @@ void MainWindow::onAnimationFinished()
 }
 
 void MainWindow::on_upgrade4_clicked()
-{   bool ok;
+{
+    bool ok;
     long long c4;
     c4 = (ui->pr4->text()).toLongLong(&ok);
-    if(!bustb==1){
-        bustb=true;
+    if (!bustb) {
+        bustb = true;
         if (score >= c4) {
-            score-=c4;
+            score -= c4;
             ui->score->setText(QString::number(score));
-            n*=5;
-            c4 *=1.8 ;
+            n_1=n;
+            n *= 5;
+            c4 *= 1.8;
             ui->pr4->setText(QString::number(c4));
+
+            // Перезапуск таймеров и сброс переменных
+            upgr2->stop();
+            upgr2_1->stop();
+            upgr2_1_1->stop();
+            timelf = 10;
+
             upgr2->start();
             ui->plus->setStyleSheet("QLabel { color : yellow; }");
-        }else{
+            upgr2_1->start();
+            ui->timeleft->setFont(font);
+            ui->timeleft->setText(QString::number(timelf) + " sec left");
+            timelf--;
+        } else {
             QFont f3;
             long long a = (c4 - score);
             f3.setPointSize(24);
@@ -276,7 +327,7 @@ void MainWindow::on_upgrade4_clicked()
             ui->warning->setText("You need " + QString::number(a));
             animation->start();
         }
-    }else{
+    } else {
         QFont f3;
         f3.setPointSize(24);
         ui->warning->show();
@@ -288,8 +339,31 @@ void MainWindow::on_upgrade4_clicked()
 
 void MainWindow::onUpgr2out()
 {
-    bustb=false;
-    n/=5;
+    ui->timeleft->setFont(font);
+    ui->timeleft->setText(QString::number(timelf) + " sec left");
+    bustb = false;
+    n = n_1;
     ui->plus->setStyleSheet("QLabel { color : black; }");
+    upgr2_1->stop();
+    upgr2_1_1->start();
+}
 
+void MainWindow::ont_1()
+{
+    if (timelf > 0) {
+        ui->timeleft->setFont(font);
+        ui->timeleft->setText(QString::number(timelf) + " sec left");
+        timelf--;
+        upgr2_1->start();
+    } else {
+        upgr2_1->stop();
+    }
+}
+
+void MainWindow::ont_1_1()
+{
+    ui->timeleft->setFont(font);
+    ui->timeleft->setText("");
+    timelf = 10;
+    ui->fire->hide();
 }
