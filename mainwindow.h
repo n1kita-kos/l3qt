@@ -48,23 +48,29 @@ private slots:
     void on_exit_triggered();
     void onAnimationFinished();
 
+    void on_upgrade4_clicked();
+    void onUpgr2out();
+
 private:
     Ui::MainWindow *ui;
-    QPropertyAnimation *animation;
-    QTimer *holdTimer;
-    QTimer *displayTimer;
-    QTimer *upgradeTimer;
-    QIcon ic1;
+    QPropertyAnimation *animation;//анимка
+    QTimer *holdTimer;//таймер для задержки
+    QTimer *displayTimer;//таймер для плюсиков
+    QTimer *upgradeTimer;//таймер автоклика
+    QTimer *upgr2;//таймер буста
+    QIcon ic1;//иконка при покупке авто
     bool isAnimationStarted;
-    bool upgr=true;
-    bool aut=false;
-    bool aut1=true;
-    long long score = 0;
-    long long n = 1;
-    long long k=1;
-    long long cost =100;
-    long long cost2=10000;
-    long long cost3=100;
+    bool upgr=true;//
+    bool aut=false;//
+    bool aut1=true;//
+    bool bustb=false;//буст включен?
+    long long score = 100000;//начальный счет
+    long long n = 1;//начальное значение клика
+    long long k=1;//начальное значение автоклика
+    long long cost =100;//апгрейд клика
+    long long cost2=10000;//покупка автоклика
+    long long cost3=150;//прокачка автоклика
+    long long cost4=1000;//буст
     QFont font;
 };
 
