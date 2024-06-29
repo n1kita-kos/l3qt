@@ -19,6 +19,7 @@
 #include <QTimer>
 #include <QIcon>
 #include <QGraphicsOpacityEffect>
+#include <QColorDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -53,6 +54,13 @@ private slots:
     void ont_1();
     void ont_1_1();
     void hidefire();
+    void on_settings_clicked();
+
+    void on_ex_sett_clicked();
+
+    void on_reset_clicked();
+
+    void on_changebackgr_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -66,12 +74,15 @@ private:
     QTimer *upgr2_1_1;//таймер буста_1_1
     QIcon ic1;//иконка при покупке авто
     QIcon ic2;//иконка при покупке буста
+    QIcon ic3;//иконка для крестика
+    QColorDialog *col1;
     bool isAnimationStarted;
+    bool plsn=false;
     bool upgr=true;
     bool aut=false;
     bool aut1=true;
     bool bustb=false;//буст включен?
-    long long score = 10000;//начальный счет
+    long long score = 100000;//начальный счет
     long long n = 1;//начальное значение клика
     long long n_1;//клон клика
     long long k=1;//начальное значение автоклика
@@ -80,6 +91,7 @@ private:
     long long cost3=150;//прокачка автоклика
     long long cost4=1000;//буст
     long long timelf=10;//время для вывода
+    int reset=1;
     QFont font;
 };
 

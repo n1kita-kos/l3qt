@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
+    ui->widget->hide();
     //размер тескта
     font.setPointSize(14);
     ui->score->setFont(font);
@@ -20,8 +21,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->upgrade2->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->upgrade3->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->upgrade4->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->settings->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->fire->setFlat(true);
     ui->fire->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
+    ui->ex_sett->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->reset->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->soundoff->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->soundon->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->changebackgr->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->ex_sett->setStyleSheet("background-color: rgb(255, 255, 255);");
 
     //фон основного окна
     this->setStyleSheet("QWidget#centralwidget { background-color: rgb(224, 255, 255); }");
@@ -90,6 +98,10 @@ MainWindow::MainWindow(QWidget *parent)
     ic1.addFile(":/images/checkmark3.png", QSize(100, 100));
     //иконка при покупке буста
     ic2.addFile(":/images/c5.png", QSize(75, 75));
+    //иконка крестика
+    ic3.addFile(":/images/c6.png", QSize(50, 50));
+    ui->ex_sett->setIconSize(QSize(50,50));
+    ui->ex_sett->setIcon(ic3);
     ui->fire->hide();
 
 }
@@ -124,6 +136,8 @@ void MainWindow::on_pushButton_clicked()
     ff.setPointSize(24);
     ui->plus->setFont(ff);
     ui->plus->setText(pls);
+    ui->scprcl->setFont(font);
+    ui->scprcl->setText("+ "+QString::number(n));
     QPoint pp;
     pp.setX(rand() % 1000);
     pp.setY(rand() % 750);
@@ -173,12 +187,22 @@ void MainWindow::on_upgrade_clicked()
     long long c1;
     c1 = (ui->pr1->text()).toLongLong(&ok);
     if (score >= c1) {
-        score -= c1;
-        ui->score->setText(QString::number(score));
-        c1 *= 1.5;
-        ui->pr1->setText(QString::number(c1));
-        n *= 1.3;
-        n++;
+        if(bustb){
+            QFont f3;
+            f3.setPointSize(24);
+            ui->warning->show();
+            ui->warning->setFont(f3);
+            ui->warning->setText("You need can't upgrade while bust.");
+            animation->start();
+        }else{
+            score -= c1;
+            ui->score->setText(QString::number(score));
+            c1 *= 1.5;
+            ui->pr1->setText(QString::number(c1));
+            n *= 1.3;
+            n++;
+        }
+
     } else {
         QFont f3;
         long long a = (c1 - score);
@@ -297,8 +321,8 @@ void MainWindow::on_upgrade4_clicked()
     long long c4;
     c4 = (ui->pr4->text()).toLongLong(&ok);
     if (!bustb) {
-        bustb = true;
         if (score >= c4) {
+            bustb = true;
             score -= c4;
             ui->score->setText(QString::number(score));
             n_1=n;
@@ -342,9 +366,10 @@ void MainWindow::onUpgr2out()
     ui->timeleft->setFont(font);
     ui->timeleft->setText(QString::number(timelf) + " sec left");
     bustb = false;
-    n = n_1;
+    n=n_1;
     ui->plus->setStyleSheet("QLabel { color : black; }");
     upgr2_1->stop();
+    upgr2->stop();
     upgr2_1_1->start();
 }
 
@@ -367,3 +392,61 @@ void MainWindow::ont_1_1()
     timelf = 10;
     ui->fire->hide();
 }
+
+
+
+
+void MainWindow::on_settings_clicked()
+{
+    ui->widget->show();
+}
+
+
+void MainWindow::on_ex_sett_clicked()
+{
+    ui->widget->hide();
+}
+
+
+void MainWindow::on_reset_clicked()
+{
+    if(score>=1000000){
+    n=5*reset;
+    cost=100;
+    cost3=150;
+    cost4=1000;
+    score=10000;
+    k=1;
+    QFont ff;
+    ff.setPointSize(14);
+    ui->pr1->setText(QString::number(cost));
+    ui->pr3->setText(QString::number(cost3));
+    ui->pr4->setText(QString::number(cost4));
+    ui->score->setText(QString::number(score));
+    ui->scprcl->setFont(ff);
+    ui->scprcl->setText("+ "+QString::number(n));
+    reset++;
+    ui->widget->hide();
+    }else{
+        ui->widget->hide();
+        QFont f3;
+        long long a = (1000000 - score);
+        f3.setPointSize(24);
+        ui->warning->show();
+        ui->warning->setFont(f3);
+        ui->warning->setText("You need " + QString::number(a)+" to reset!");
+        animation->start();
+    }
+
+}
+
+
+void MainWindow::on_changebackgr_clicked()
+{
+    col1->getColor();
+    // QColor cor;
+    // cor.
+    // this->setStyleSheet("QWidget#centralwidget { background-color: col1->currentColor(); ");
+
+}
+
