@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent)
     upgr2_1_1->setInterval(100);
     connect(upgr2_1_1, &QTimer::timeout, this, &MainWindow::ont_1_1);
 
+
     //расставляю стоимость улучшений
     ui->pr1->setFont(font);
     ui->pr1->setText(QString::number(cost));
@@ -106,6 +107,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->ex_sett->setIcon(ic3);
     ui->fire->hide();
 
+    //музыка
+    player=new QMediaPlayer(this);
+    audioOutput = new QAudioOutput(this);
+    player->setAudioOutput(audioOutput);
+    player->setSource(QUrl("qrc:/images/Digital Dream.mp3"));
+    audioOutput->setVolume(50);
+    player->setLoops(QMediaPlayer::Infinite);
+    player->play();
 }
 
 MainWindow::~MainWindow()
@@ -338,8 +347,15 @@ void MainWindow::on_upgrade4_clicked()
             upgr2_1_1->stop();
             timelf = 10;
 
+            if(stpd){
+                upgr2->setInterval(10000);
+            }
             upgr2->start();
+
             ui->plus->setStyleSheet("QLabel { color : yellow; }");
+            if(stpd){
+                upgr2_1->setInterval(1000);
+            }
             upgr2_1->start();
             ui->timeleft->setFont(font);
             ui->timeleft->setText(QString::number(timelf) + " sec left");
@@ -372,6 +388,9 @@ void MainWindow::onUpgr2out()
     ui->plus->setStyleSheet("QLabel { color : black; }");
     upgr2_1->stop();
     upgr2->stop();
+    if(stpd){
+        upgr2_1_1->setInterval(100);
+    }
     upgr2_1_1->start();
 }
 
@@ -381,10 +400,14 @@ void MainWindow::ont_1()
         ui->timeleft->setFont(font);
         ui->timeleft->setText(QString::number(timelf) + " sec left");
         timelf--;
+        if(stpd){
+            upgr2_1->setInterval(1000);
+        }
         upgr2_1->start();
     } else {
         upgr2_1->stop();
     }
+
 }
 
 void MainWindow::ont_1_1()
@@ -401,27 +424,28 @@ void MainWindow::ont_1_1()
 void MainWindow::on_settings_clicked()
 {
     ui->widget->show();
-    // rtime=upgr2->remainingTime();
-    // rtime2=upgr2_1->remainingTime();
-    // rtime3=upgr2_1_1->remainingTime();
-    // upgr2->stop();
-    // upgr2_1->stop();
-    // upgr2_1_1->stop();
+    rtime=upgr2->remainingTime();
+    rtime2=upgr2_1->remainingTime();
+    rtime3=upgr2_1_1->remainingTime();
+    upgr2->stop();
+    upgr2_1->stop();
+    upgr2_1_1->stop();
 }
 
 
 void MainWindow::on_ex_sett_clicked()
 {
     ui->widget->hide();
-    // upgr2->start(rtime);
-    // upgr2_1->start(rtime2);
-    // upgr2_1_1->start(rtime3);
+    upgr2->start(rtime);
+    upgr2_1->start(rtime2);
+    stpd=true;
+    upgr2_1_1->start(rtime3);
 }
 
 
 void MainWindow::on_reset_clicked()
 {
-    if(score>=1000000){
+    if(score>=1000000*(reset*2)){
         n=5*reset;
         cost=100;
         cost3=150;
@@ -437,16 +461,25 @@ void MainWindow::on_reset_clicked()
         ui->scprcl->setFont(ff);
         ui->scprcl->setText("+ "+QString::number(n));
         reset++;
+        upgr2->start(rtime);
+        upgr2_1->start(rtime2);
+        stpd=true;
+        upgr2_1_1->start(rtime3);
         ui->widget->hide();
     }else{
         ui->widget->hide();
         QFont f3;
-        long long a = (1000000 - score);
+        upgr2->start(rtime);
+        upgr2_1->start(rtime2);
+        stpd=true;
+        upgr2_1_1->start(rtime3);
+        animation->start();
+        long long a = ((1000000*(reset*2)) - score);
         f3.setPointSize(24);
         ui->warning->show();
         ui->warning->setFont(f3);
         ui->warning->setText("You need " + QString::number(a)+" to reset!");
-        animation->start();
+
     }
 
 }
@@ -461,6 +494,29 @@ void MainWindow::on_changebackgr_clicked()
         QString colorName = color.name();
 
         this->setStyleSheet(QString("QWidget#centralwidget { background-color: %1; }").arg(colorName));
+    }else{
+        upgr2->start(rtime);
+        upgr2_1->start(rtime2);
+        stpd=true;
+        upgr2_1_1->start(rtime3);
+        QFont f3;
+        f3.setPointSize(24);
+        ui->warning->show();
+        ui->warning->setFont(f3);
+        ui->warning->setText("Wrong color format.");
+        animation->start();
     }
+}
+
+
+void MainWindow::on_soundoff_clicked()
+{
+   player->pause();
+}
+
+
+void MainWindow::on_soundon_clicked()
+{
+   player->play();
 }
 

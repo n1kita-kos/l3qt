@@ -108,7 +108,7 @@
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string>+ for touch</string>
+     <string>click improvement</string>
     </property>
    </widget>
    <widget class="QLabel" name="t1">
@@ -150,7 +150,7 @@
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string>auto</string>
+     <string>autoclicker</string>
     </property>
    </widget>
    <widget class="QPushButton" name="upgrade3">
@@ -166,7 +166,7 @@
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string>+ for auto</string>
+     <string>autoclicker improvement</string>
     </property>
    </widget>
    <widget class="QLabel" name="t2">
@@ -247,7 +247,7 @@
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
     <property name="text">
-     <string>x5 for touch (10s)</string>
+     <string>x5 to clicks (10s)</string>
     </property>
    </widget>
    <widget class="QLabel" name="pr4">
@@ -346,6 +346,9 @@
       <height>81</height>
      </rect>
     </property>
+    <property name="cursor">
+     <cursorShape>OpenHandCursor</cursorShape>
+    </property>
     <property name="text">
      <string>SETTINGS</string>
     </property>
@@ -374,8 +377,11 @@
        <height>75</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>OpenHandCursor</cursorShape>
+     </property>
      <property name="text">
-      <string>RESET GAME</string>
+      <string>RESTART GAME</string>
      </property>
     </widget>
     <widget class="QPushButton" name="soundoff">
@@ -386,6 +392,9 @@
        <width>200</width>
        <height>75</height>
       </rect>
+     </property>
+     <property name="cursor">
+      <cursorShape>OpenHandCursor</cursorShape>
      </property>
      <property name="text">
       <string>SOUND OFF</string>
@@ -400,6 +409,9 @@
        <height>75</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>OpenHandCursor</cursorShape>
+     </property>
      <property name="text">
       <string>SOUND ON</string>
      </property>
@@ -413,6 +425,9 @@
        <height>75</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>OpenHandCursor</cursorShape>
+     </property>
      <property name="text">
       <string>CHANGE BACKGROUND COLOR</string>
      </property>
@@ -425,6 +440,9 @@
        <width>50</width>
        <height>50</height>
       </rect>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="text">
       <string/>

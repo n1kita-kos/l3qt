@@ -21,6 +21,16 @@
 #include <QGraphicsOpacityEffect>
 #include <QColorDialog>
 #include <QPalette>
+#include <QtMultimedia>
+#include <QtMultimediaWidgets/QVideoWidget>
+#include <QtMultimedia/QMediaPlayer>
+#include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QWidget>
+#include <QUrl>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -63,8 +73,14 @@ private slots:
 
     void on_changebackgr_clicked();
 
+    void on_soundoff_clicked();
+
+    void on_soundon_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QMediaPlayer *player;
+    QAudioOutput *audioOutput;
     QPropertyAnimation *animation;//анимка
     QTimer *holdTimer;//таймер для задержки
     QTimer *displayTimer;//таймер для плюсиков
@@ -73,17 +89,20 @@ private:
     QTimer *upgr2;//таймер буста
     QTimer *upgr2_1;//таймер буста_1
     QTimer *upgr2_1_1;//таймер буста_1_1
+    QMediaPlayer *plar;
+    QAudioOutput *aout;
     QIcon ic1;//иконка при покупке авто
     QIcon ic2;//иконка при покупке буста
     QIcon ic3;//иконка для крестика
     QColorDialog *col1;
+    bool stpd=false;
     bool isAnimationStarted;
     bool plsn=false;
     bool upgr=true;
     bool aut=false;
     bool aut1=true;
     bool bustb=false;//буст включен?
-    long long score = 100000;//начальный счет
+    long long score = 0;//начальный счет
     long long n = 1;//начальное значение клика
     long long n_1;//клон клика
     long long k=1;//начальное значение автоклика
