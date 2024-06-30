@@ -20,6 +20,7 @@
 #include <QIcon>
 #include <QGraphicsOpacityEffect>
 #include <QColorDialog>
+#include <QPalette>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -92,6 +93,9 @@ private:
     long long cost4=1000;//буст
     long long timelf=10;//время для вывода
     int reset=1;
+    int rtime=0;
+    int rtime2=0;
+    int rtime3=0;
     QFont font;
 };
 

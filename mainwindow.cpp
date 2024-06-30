@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
     ui->widget->hide();
+    setFixedSize(1005,800);
+    ui->widget->setFixedSize(1005,800);
     //размер тескта
     font.setPointSize(14);
     ui->score->setFont(font);
@@ -399,34 +401,43 @@ void MainWindow::ont_1_1()
 void MainWindow::on_settings_clicked()
 {
     ui->widget->show();
+    // rtime=upgr2->remainingTime();
+    // rtime2=upgr2_1->remainingTime();
+    // rtime3=upgr2_1_1->remainingTime();
+    // upgr2->stop();
+    // upgr2_1->stop();
+    // upgr2_1_1->stop();
 }
 
 
 void MainWindow::on_ex_sett_clicked()
 {
     ui->widget->hide();
+    // upgr2->start(rtime);
+    // upgr2_1->start(rtime2);
+    // upgr2_1_1->start(rtime3);
 }
 
 
 void MainWindow::on_reset_clicked()
 {
     if(score>=1000000){
-    n=5*reset;
-    cost=100;
-    cost3=150;
-    cost4=1000;
-    score=10000;
-    k=1;
-    QFont ff;
-    ff.setPointSize(14);
-    ui->pr1->setText(QString::number(cost));
-    ui->pr3->setText(QString::number(cost3));
-    ui->pr4->setText(QString::number(cost4));
-    ui->score->setText(QString::number(score));
-    ui->scprcl->setFont(ff);
-    ui->scprcl->setText("+ "+QString::number(n));
-    reset++;
-    ui->widget->hide();
+        n=5*reset;
+        cost=100;
+        cost3=150;
+        cost4=1000;
+        score=10000;
+        k=1;
+        QFont ff;
+        ff.setPointSize(14);
+        ui->pr1->setText(QString::number(cost));
+        ui->pr3->setText(QString::number(cost3));
+        ui->pr4->setText(QString::number(cost4));
+        ui->score->setText(QString::number(score));
+        ui->scprcl->setFont(ff);
+        ui->scprcl->setText("+ "+QString::number(n));
+        reset++;
+        ui->widget->hide();
     }else{
         ui->widget->hide();
         QFont f3;
@@ -443,10 +454,13 @@ void MainWindow::on_reset_clicked()
 
 void MainWindow::on_changebackgr_clicked()
 {
-    col1->getColor();
-    // QColor cor;
-    // cor.
-    // this->setStyleSheet("QWidget#centralwidget { background-color: col1->currentColor(); ");
+    QColor color = QColorDialog::getColor(Qt::white, this, "Выберите цвет");
 
+    if (color.isValid()) {
+
+        QString colorName = color.name();
+
+        this->setStyleSheet(QString("QWidget#centralwidget { background-color: %1; }").arg(colorName));
+    }
 }
 
