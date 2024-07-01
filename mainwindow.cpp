@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->widget->hide();
     setFixedSize(1005,800);
     ui->widget->setFixedSize(1005,800);
+
     //размер тескта
     font.setPointSize(14);
     ui->score->setFont(font);
@@ -32,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->soundon->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->changebackgr->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->ex_sett->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->ex_game->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->ch_mus->setStyleSheet("background-color: rgb(255, 255, 255);");
 
     //фон основного окна
     this->setStyleSheet("QWidget#centralwidget { background-color: rgb(224, 255, 255); }");
@@ -68,9 +71,6 @@ MainWindow::MainWindow(QWidget *parent)
     upgradeTimer->setInterval(1000);
     connect(upgradeTimer, &QTimer::timeout, this, &MainWindow::onUpgradeTimeout);
 
-    //функция выхода
-    connect(ui->exit, &QAction::triggered, this, &MainWindow::on_exit_triggered);
-
     //таймер для буста
     upgr2 = new QTimer(this);
     upgr2->setInterval(10000);
@@ -104,6 +104,10 @@ MainWindow::MainWindow(QWidget *parent)
     //иконка крестика
     ic3.addFile(":/images/c6.png", QSize(50, 50));
     ui->ex_sett->setIconSize(QSize(50,50));
+    ic4.addFile(":/images/gold-coin-icon.png",QSize(300,300));
+    ui->pushButton->setIconSize(QSize(300,300));
+    ui->pushButton->setIcon(ic4);
+
     ui->ex_sett->setIcon(ic3);
     ui->fire->hide();
 
@@ -115,6 +119,13 @@ MainWindow::MainWindow(QWidget *parent)
     audioOutput->setVolume(50);
     player->setLoops(QMediaPlayer::Infinite);
     player->play();
+
+    lbgif=new QLabel(ui->widget);
+    moviegf = new QMovie(":/images/coingif.gif");
+    lbgif->move(560, 230);
+    lbgif->setFixedSize(300, 300);
+    moviegf->setScaledSize(QSize(300, 300));
+    lbgif->setMovie(moviegf);
 }
 
 MainWindow::~MainWindow()
@@ -122,10 +133,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_exit_triggered()
-{
-    QApplication::quit();
-}
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -210,7 +217,7 @@ void MainWindow::on_upgrade_clicked()
             ui->score->setText(QString::number(score));
             c1 *= 1.5;
             ui->pr1->setText(QString::number(c1));
-            n *= 1.3;
+            n *= 1.45;
             n++;
         }
 
@@ -292,7 +299,7 @@ void MainWindow::on_upgrade3_clicked()
             ui->score->setText(QString::number(score));
             c3 *= 1.5;
             ui->pr3->setText(QString::number(c3));
-            k *= 1.3;
+            k *= 1.45;
             k++;
             ui->autoplus->setFont(font);
             ui->autoplus->setText(QString::number(k) + " auto");
@@ -310,7 +317,7 @@ void MainWindow::on_upgrade3_clicked()
         f3.setPointSize(24);
         ui->warning->show();
         ui->warning->setFont(f3);
-        ui->warning->setText("Buy auto");
+        ui->warning->setText("Buy autoclicker");
         animation->start();
     }
 }
@@ -338,7 +345,7 @@ void MainWindow::on_upgrade4_clicked()
             ui->score->setText(QString::number(score));
             n_1=n;
             n *= 5;
-            c4 *= 1.8;
+            c4 *= 1.6;
             ui->pr4->setText(QString::number(c4));
 
             // Перезапуск таймеров и сброс переменных
@@ -430,6 +437,7 @@ void MainWindow::on_settings_clicked()
     upgr2->stop();
     upgr2_1->stop();
     upgr2_1_1->stop();
+    moviegf->start();
 }
 
 
@@ -440,12 +448,13 @@ void MainWindow::on_ex_sett_clicked()
     upgr2_1->start(rtime2);
     stpd=true;
     upgr2_1_1->start(rtime3);
+    moviegf->stop();
 }
 
 
 void MainWindow::on_reset_clicked()
 {
-    if(score>=1000000*(reset*2)){
+    if(score>=1000000*(reset)){
         n=5*reset;
         cost=100;
         cost3=150;
@@ -474,7 +483,7 @@ void MainWindow::on_reset_clicked()
         stpd=true;
         upgr2_1_1->start(rtime3);
         animation->start();
-        long long a = ((1000000*(reset*2)) - score);
+        long long a = ((1000000*(reset)) - score);
         f3.setPointSize(24);
         ui->warning->show();
         ui->warning->setFont(f3);
@@ -518,5 +527,31 @@ void MainWindow::on_soundoff_clicked()
 void MainWindow::on_soundon_clicked()
 {
    player->play();
+}
+
+
+void MainWindow::on_ex_game_clicked()
+{
+    QApplication::quit();
+}
+
+
+void MainWindow::on_ch_mus_clicked()
+{
+    mus++;
+    if(mus%2==0){
+        player->setAudioOutput(audioOutput);
+        player->setSource(QUrl("qrc:/images/Digital Dream.mp3"));
+        audioOutput->setVolume(50);
+        player->setLoops(QMediaPlayer::Infinite);
+        player->play();
+    }
+    if(mus%2==1){
+        player->setAudioOutput(audioOutput);
+        player->setSource(QUrl("qrc:/images/Pixel Dreams.mp3"));
+        audioOutput->setVolume(50);
+        player->setLoops(QMediaPlayer::Infinite);
+        player->play();
+    }
 }
 

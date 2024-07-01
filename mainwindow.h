@@ -31,6 +31,10 @@
 #include <QWidget>
 #include <QUrl>
 #include <QDebug>
+#include <QKeyEvent>
+#include <QVBoxLayout>
+#include <QEvent>
+#include <QMovie>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -57,7 +61,6 @@ private slots:
 
     void on_upgrade3_clicked();
     void onUpgradeTimeout();
-    void on_exit_triggered();
     void onAnimationFinished();
 
     void on_upgrade4_clicked();
@@ -77,6 +80,10 @@ private slots:
 
     void on_soundon_clicked();
 
+    void on_ex_game_clicked();
+
+    void on_ch_mus_clicked();
+
 private:
     Ui::MainWindow *ui;
     QMediaPlayer *player;
@@ -94,6 +101,7 @@ private:
     QIcon ic1;//иконка при покупке авто
     QIcon ic2;//иконка при покупке буста
     QIcon ic3;//иконка для крестика
+    QIcon ic4;//иконка монетки
     QColorDialog *col1;
     bool stpd=false;
     bool isAnimationStarted;
@@ -115,7 +123,10 @@ private:
     int rtime=0;
     int rtime2=0;
     int rtime3=0;
+    int mus=0;
     QFont font;
+    QLabel *lbgif;
+    QMovie *moviegf;
 };
 
 #endif

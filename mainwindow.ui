@@ -29,6 +29,12 @@
     <property name="cursor">
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
+    <property name="tabletTracking">
+     <bool>false</bool>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -41,6 +47,12 @@
       <width>300</width>
       <height>300</height>
      </size>
+    </property>
+    <property name="shortcut">
+     <string>Space</string>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="text">
@@ -107,8 +119,14 @@
     <property name="cursor">
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="text">
      <string>click improvement</string>
+    </property>
+    <property name="shortcut">
+     <string>+</string>
     </property>
    </widget>
    <widget class="QLabel" name="t1">
@@ -149,8 +167,14 @@
     <property name="cursor">
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="text">
      <string>autoclicker</string>
+    </property>
+    <property name="shortcut">
+     <string>A, U</string>
     </property>
    </widget>
    <widget class="QPushButton" name="upgrade3">
@@ -165,8 +189,14 @@
     <property name="cursor">
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="text">
      <string>autoclicker improvement</string>
+    </property>
+    <property name="shortcut">
+     <string>Ctrl+A</string>
     </property>
    </widget>
    <widget class="QLabel" name="t2">
@@ -246,8 +276,14 @@
     <property name="cursor">
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="text">
      <string>x5 to clicks (10s)</string>
+    </property>
+    <property name="shortcut">
+     <string>X, 5</string>
     </property>
    </widget>
    <widget class="QLabel" name="pr4">
@@ -352,6 +388,9 @@
     <property name="text">
      <string>SETTINGS</string>
     </property>
+    <property name="shortcut">
+     <string>Ctrl+S</string>
+    </property>
    </widget>
    <widget class="QWidget" name="widget" native="true">
     <property name="enabled">
@@ -383,6 +422,9 @@
      <property name="text">
       <string>RESTART GAME</string>
      </property>
+     <property name="shortcut">
+      <string>Ctrl+R</string>
+     </property>
     </widget>
     <widget class="QPushButton" name="soundoff">
      <property name="geometry">
@@ -398,6 +440,9 @@
      </property>
      <property name="text">
       <string>SOUND OFF</string>
+     </property>
+     <property name="shortcut">
+      <string>Volume Mute</string>
      </property>
     </widget>
     <widget class="QPushButton" name="soundon">
@@ -415,6 +460,9 @@
      <property name="text">
       <string>SOUND ON</string>
      </property>
+     <property name="shortcut">
+      <string>Volume Up</string>
+     </property>
     </widget>
     <widget class="QPushButton" name="changebackgr">
      <property name="geometry">
@@ -430,6 +478,9 @@
      </property>
      <property name="text">
       <string>CHANGE BACKGROUND COLOR</string>
+     </property>
+     <property name="shortcut">
+      <string>Ctrl+C</string>
      </property>
     </widget>
     <widget class="QPushButton" name="ex_sett">
@@ -457,6 +508,38 @@
        <height>50</height>
       </size>
      </property>
+     <property name="shortcut">
+      <string>Esc</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="ex_game">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>570</y>
+       <width>200</width>
+       <height>75</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>EXIT GAME</string>
+     </property>
+     <property name="shortcut">
+      <string>Shift+Esc</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="ch_mus">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>570</y>
+       <width>200</width>
+       <height>75</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>CHAGE MUSIC</string>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -469,20 +552,8 @@
      <height>26</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuESC">
-    <property name="title">
-     <string>ESC</string>
-    </property>
-    <addaction name="exit"/>
-   </widget>
-   <addaction name="menuESC"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="exit">
-   <property name="text">
-    <string>Exit</string>
-   </property>
-  </action>
  </widget>
  <resources>
   <include location="resources.qrc"/>
