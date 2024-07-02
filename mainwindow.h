@@ -35,6 +35,13 @@
 #include <QVBoxLayout>
 #include <QEvent>
 #include <QMovie>
+#include <QtWidgets>
+#include <QtMultimedia>
+#include <QtMultimediaWidgets>
+#include <QTextStream>
+#include <QDataStream>
+#include <QFile>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -47,7 +54,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_pressed();
@@ -83,11 +91,15 @@ private slots:
     void on_ex_game_clicked();
 
     void on_ch_mus_clicked();
+    void onvideoout(QMediaPlayer::MediaStatus status);
 
 private:
     Ui::MainWindow *ui;
     QMediaPlayer *player;
+    QMediaPlayer *player2;
+    QVideoWidget *video;
     QAudioOutput *audioOutput;
+    QAudioOutput *audioOutput2;
     QPropertyAnimation *animation;//анимка
     QTimer *holdTimer;//таймер для задержки
     QTimer *displayTimer;//таймер для плюсиков
@@ -107,26 +119,32 @@ private:
     bool isAnimationStarted;
     bool plsn=false;
     bool upgr=true;
-    bool aut=false;
+    int aut;
     bool aut1=true;
-    bool bustb=false;//буст включен?
-    long long score = 0;//начальный счет
-    long long n = 1;//начальное значение клика
+    int bustb=0;//буст включен?
+    long long score ;//начальный счет
+    long long n ;//начальное значение клика
     long long n_1;//клон клика
-    long long k=1;//начальное значение автоклика
-    long long cost =100;//апгрейд клика
-    long long cost2=10000;//покупка автоклика
-    long long cost3=150;//прокачка автоклика
-    long long cost4=1000;//буст
+    long long k;//начальное значение автоклика
+    long long cost;//апгрейд клика
+    long long cost2;//покупка автоклика
+    long long cost3;//прокачка автоклика
+    long long cost4;//буст
     long long timelf=10;//время для вывода
-    int reset=1;
+    int reset;
     int rtime=0;
     int rtime2=0;
     int rtime3=0;
-    int mus=0;
+    int mus;
+    int str=0;
     QFont font;
     QLabel *lbgif;
     QMovie *moviegf;
+    QString CheatCode;
+    QString colr;
+    void HESOYAM();
+    void color1();
 };
+
 
 #endif

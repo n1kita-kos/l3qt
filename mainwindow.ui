@@ -48,9 +48,6 @@
       <height>300</height>
      </size>
     </property>
-    <property name="shortcut">
-     <string>Space</string>
-    </property>
     <property name="flat">
      <bool>true</bool>
     </property>
@@ -173,9 +170,6 @@
     <property name="text">
      <string>autoclicker</string>
     </property>
-    <property name="shortcut">
-     <string>A, U</string>
-    </property>
    </widget>
    <widget class="QPushButton" name="upgrade3">
     <property name="geometry">
@@ -283,7 +277,7 @@
      <string>x5 to clicks (10s)</string>
     </property>
     <property name="shortcut">
-     <string>X, 5</string>
+     <string>Ctrl+X</string>
     </property>
    </widget>
    <widget class="QLabel" name="pr4">

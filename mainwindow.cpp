@@ -6,16 +6,93 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , isAnimationStarted(false)
 {
-
     ui->setupUi(this);
-    ui->widget->hide();
-    setFixedSize(1005,800);
-    ui->widget->setFixedSize(1005,800);
+
+
+    player2=new QMediaPlayer(this);
+    video = new QVideoWidget(this);
+    player2->setVideoOutput(video);
+    player2->setSource(QUrl("qrc:/images/phon3.mov"));
+    video->setGeometry(0,0,1005,800);
+    video->setFixedSize(1005,800);
+    player=new QMediaPlayer(this);
+    audioOutput = new QAudioOutput(this);
+    player->setAudioOutput(audioOutput);
+    player->setSource(QUrl("qrc:/images/phon3.mov"));
+    audioOutput->setVolume(50);
+    player->setLoops(1);
+    video->show();
+    player->play();
+    player2->play();
+    connect(player2,&QMediaPlayer::mediaStatusChanged,this,&MainWindow::onvideoout);
+
 
     //размер тескта
     font.setPointSize(14);
     ui->score->setFont(font);
     ui->score->setText(QString::number(score));
+
+    //таймер на автокликер
+    upgradeTimer = new QTimer(this);
+    upgradeTimer->setInterval(1000);
+    connect(upgradeTimer, &QTimer::timeout, this, &MainWindow::onUpgradeTimeout);
+
+    QFile dtxt("data.txt");
+    QFile dbin("data1.bin");
+    //иконка покупки автокликера
+    ic1.addFile(":/images/checkmark3.png", QSize(100, 100));
+
+    if (dbin.open(QIODevice::ReadOnly)) {
+        QDataStream binin(&dbin);
+        binin >> n >> k >> score >> aut >> cost >> cost2 >> cost3 >> cost4 >> reset >> mus>>str;
+        dbin.close();
+    }
+
+    //расставляю стоимость улучшений
+    ui->score->setFont(font);
+    ui->score->setText(QString::number(score));
+    ui->pr1->setFont(font);
+    ui->pr1->setText(QString::number(cost));
+    ui->pr2->setFont(font);
+    ui->pr2->setText(QString::number(cost2));
+    ui->pr3->setFont(font);
+    ui->pr3->setText(QString::number(cost3));
+    ui->pr4->setFont(font);
+    ui->pr4->setText(QString::number(cost4));
+
+    if(aut==1){
+        ui->upgrade2->setText("");
+        ui->upgrade2->setIcon(ic1);
+        ui->upgrade2->setIconSize(QSize(81, 81));
+        ui->pr2->setText("-");
+        ui->autoplus->setFont(font);
+        ui->autoplus->setText(QString::number(k) + " auto");
+        if (!upgradeTimer->isActive()) {
+            upgradeTimer->start();
+        }
+    }else{
+        ui->pr2->setFont(font);
+        ui->pr2->setText(QString::number(cost2));
+    }
+
+    if (str == 0) {
+        if (dtxt.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream txtin(&dtxt);
+            str++;
+            txtin >> n >> k >> score >> aut>> cost >> cost2 >> cost3 >> cost4 >> reset >> mus;
+            dtxt.close();
+        }
+
+        if (dbin.open(QIODevice::WriteOnly)) {
+            QDataStream binin(&dbin);
+            binin << n << k << score << aut << cost << cost2 << cost3 << cost4 << reset << mus;
+            dbin.close();
+        }
+    }
+
+    ui->widget->hide();
+    setFixedSize(1005,800);
+    ui->widget->setFixedSize(1005,800);
 
     //основная кнопка и fire прозрачные, остальные белые
     ui->pushButton->setFlat(true);
@@ -66,10 +143,6 @@ MainWindow::MainWindow(QWidget *parent)
     displayTimer2->setSingleShot(true);
     connect(displayTimer2, &QTimer::timeout, this, &MainWindow::hidefire);
 
-    //таймер на автокликер
-    upgradeTimer = new QTimer(this);
-    upgradeTimer->setInterval(1000);
-    connect(upgradeTimer, &QTimer::timeout, this, &MainWindow::onUpgradeTimeout);
 
     //таймер для буста
     upgr2 = new QTimer(this);
@@ -87,18 +160,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(upgr2_1_1, &QTimer::timeout, this, &MainWindow::ont_1_1);
 
 
-    //расставляю стоимость улучшений
-    ui->pr1->setFont(font);
-    ui->pr1->setText(QString::number(cost));
-    ui->pr2->setFont(font);
-    ui->pr2->setText(QString::number(cost2));
-    ui->pr3->setFont(font);
-    ui->pr3->setText(QString::number(cost3));
-    ui->pr4->setFont(font);
-    ui->pr4->setText(QString::number(cost4));
-
-    //иконка покупки автокликера
-    ic1.addFile(":/images/checkmark3.png", QSize(100, 100));
     //иконка при покупке буста
     ic2.addFile(":/images/c5.png", QSize(75, 75));
     //иконка крестика
@@ -111,18 +172,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->ex_sett->setIcon(ic3);
     ui->fire->hide();
 
-    //музыка
-    player=new QMediaPlayer(this);
-    audioOutput = new QAudioOutput(this);
-    player->setAudioOutput(audioOutput);
-    player->setSource(QUrl("qrc:/images/Digital Dream.mp3"));
-    audioOutput->setVolume(50);
-    player->setLoops(QMediaPlayer::Infinite);
-    player->play();
 
     lbgif=new QLabel(ui->widget);
     moviegf = new QMovie(":/images/coingif.gif");
-    lbgif->move(560, 230);
+    lbgif->move(490, 180);
     lbgif->setFixedSize(300, 300);
     moviegf->setScaledSize(QSize(300, 300));
     lbgif->setMovie(moviegf);
@@ -130,13 +183,57 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    QFile dbin("data1.bin");
+    if (dbin.open(QIODevice::WriteOnly)) {
+        QDataStream binin(&dbin);
+        binin << n << k << score << aut << cost << cost2 << cost3 << cost4 << reset << mus<<str;
+        dbin.close();
+    }
     delete ui;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    qDebug() << event;
+    colr +=event->text();
+    CheatCode += event->text();
+    if (CheatCode.endsWith("hesoyam")) { // Пример чит-кода
+        HESOYAM();
+        CheatCode.clear();
+    }
+    if(colr.endsWith("color")){
+        color1();
+        colr.clear();
+    }
+    if (event->key() == Qt::Key_Space and !event->isAutoRepeat()) {
+        on_pushButton_clicked();
+    }
+    ui->warning->setStyleSheet("QLabel { color : black; }");
+    QMainWindow::keyPressEvent(event);  // Обработка остальных событий клавиш
+}
+void MainWindow::color1(){
+    on_settings_clicked();
+    on_changebackgr_clicked();
+
+}
+void MainWindow::HESOYAM() {
+    score += 10000;
+    QFont f1;
+    f1.setPointSize(14);
+    ui->score->setFont(f1);
+    ui->score->setText(QString::number(score));
+    QFont f3;
+    f3.setPointSize(24);
+    ui->warning->show();
+    ui->warning->setFont(f3);
+    ui->warning->setStyleSheet("QLabel { color : yellow; }");
+    ui->warning->setText("+" + QString::number(10000));
+    animation->start();
 }
 
 
 void MainWindow::on_pushButton_clicked()
 {
-    if(bustb){
+    if(bustb==1){
         ui->fire->setIcon(ic2);
         QPoint pp1;
         pp1.setX(rand() % 1000);
@@ -205,7 +302,7 @@ void MainWindow::on_upgrade_clicked()
     long long c1;
     c1 = (ui->pr1->text()).toLongLong(&ok);
     if (score >= c1) {
-        if(bustb){
+        if(bustb==1){
             QFont f3;
             f3.setPointSize(24);
             ui->warning->show();
@@ -217,7 +314,7 @@ void MainWindow::on_upgrade_clicked()
             ui->score->setText(QString::number(score));
             c1 *= 1.5;
             ui->pr1->setText(QString::number(c1));
-            n *= 1.45;
+            n *= 1.3;
             n++;
         }
 
@@ -245,21 +342,19 @@ void MainWindow::on_upgrade2_clicked()
                 if (score >= c2) {
                     score -= c2;
                     ui->score->setText(QString::number(score));
-                    c2 *= 2;
-                    ui->pr2->setText(QString::number(c2));
 
                     if (!upgradeTimer->isActive()) {
                         upgradeTimer->start();
                     }
                 }
-
+                bustb=1;
                 ui->upgrade2->setText("");
                 ui->upgrade2->setIcon(ic1);
                 ui->upgrade2->setIconSize(QSize(81, 81));
                 ui->pr2->setText("-");
                 ui->autoplus->setFont(font);
                 ui->autoplus->setText(QString::number(k) + " auto");
-                aut = true;
+                aut =1;
             } else {
                 QFont f3;
                 long long a = (c2 - score);
@@ -290,7 +385,7 @@ void MainWindow::on_upgrade2_clicked()
 
 void MainWindow::on_upgrade3_clicked()
 {
-    if (aut) {
+    if (aut==1) {
         bool ok;
         long long c3;
         c3 = (ui->pr3->text()).toLongLong(&ok);
@@ -299,7 +394,7 @@ void MainWindow::on_upgrade3_clicked()
             ui->score->setText(QString::number(score));
             c3 *= 1.5;
             ui->pr3->setText(QString::number(c3));
-            k *= 1.45;
+            k *= 1.3;
             k++;
             ui->autoplus->setFont(font);
             ui->autoplus->setText(QString::number(k) + " auto");
@@ -338,14 +433,14 @@ void MainWindow::on_upgrade4_clicked()
     bool ok;
     long long c4;
     c4 = (ui->pr4->text()).toLongLong(&ok);
-    if (!bustb) {
+    if ((!bustb)==1) {
         if (score >= c4) {
-            bustb = true;
+            bustb = 1;
             score -= c4;
             ui->score->setText(QString::number(score));
             n_1=n;
             n *= 5;
-            c4 *= 1.6;
+            c4 *= 1.8 ;
             ui->pr4->setText(QString::number(c4));
 
             // Перезапуск таймеров и сброс переменных
@@ -390,7 +485,7 @@ void MainWindow::onUpgr2out()
 {
     ui->timeleft->setFont(font);
     ui->timeleft->setText(QString::number(timelf) + " sec left");
-    bustb = false;
+    bustb = 0;
     n=n_1;
     ui->plus->setStyleSheet("QLabel { color : black; }");
     upgr2_1->stop();
@@ -454,7 +549,7 @@ void MainWindow::on_ex_sett_clicked()
 
 void MainWindow::on_reset_clicked()
 {
-    if(score>=1000000*(reset)){
+    if(score>=1000000*(reset*2)){
         n=5*reset;
         cost=100;
         cost3=150;
@@ -483,7 +578,7 @@ void MainWindow::on_reset_clicked()
         stpd=true;
         upgr2_1_1->start(rtime3);
         animation->start();
-        long long a = ((1000000*(reset)) - score);
+        long long a = ((1000000*(reset*2)) - score);
         f3.setPointSize(24);
         ui->warning->show();
         ui->warning->setFont(f3);
@@ -532,6 +627,12 @@ void MainWindow::on_soundon_clicked()
 
 void MainWindow::on_ex_game_clicked()
 {
+    QFile dbin("data1.bin");
+    if (dbin.open(QIODevice::WriteOnly)) {
+        QDataStream binin(&dbin);
+        binin << n << k << score << aut << cost << cost2 << cost3 << cost4 << reset << mus<<str;
+        dbin.close();
+    }
     QApplication::quit();
 }
 
@@ -539,19 +640,71 @@ void MainWindow::on_ex_game_clicked()
 void MainWindow::on_ch_mus_clicked()
 {
     mus++;
-    if(mus%2==0){
+    if(mus%4==0){
         player->setAudioOutput(audioOutput);
         player->setSource(QUrl("qrc:/images/Digital Dream.mp3"));
         audioOutput->setVolume(50);
         player->setLoops(QMediaPlayer::Infinite);
         player->play();
     }
-    if(mus%2==1){
+    if(mus%4==1){
         player->setAudioOutput(audioOutput);
         player->setSource(QUrl("qrc:/images/Pixel Dreams.mp3"));
         audioOutput->setVolume(50);
         player->setLoops(QMediaPlayer::Infinite);
         player->play();
+    }
+    if(mus%4==2){
+        player->setAudioOutput(audioOutput);
+        player->setSource(QUrl("qrc:/images/SHADXWBXRN - KNIGHT.mp3"));
+        audioOutput->setVolume(50);
+        player->setLoops(QMediaPlayer::Infinite);
+        player->play();
+    }
+    if(mus%4==3){
+        player->setAudioOutput(audioOutput);
+        player->setSource(QUrl("qrc:/images/Skrillex - Bangarang.mp3"));
+        audioOutput->setVolume(50);
+        player->setLoops(QMediaPlayer::Infinite);
+        player->play();
+    }
+}
+
+void MainWindow::onvideoout(QMediaPlayer::MediaStatus status)
+{
+    if (status == QMediaPlayer::EndOfMedia) {
+        player2->stop();
+        video->hide();
+        //музыка
+        player=new QMediaPlayer(this);
+        if(mus%4==0){
+            player->setAudioOutput(audioOutput);
+            player->setSource(QUrl("qrc:/images/Digital Dream.mp3"));
+            audioOutput->setVolume(50);
+            player->setLoops(QMediaPlayer::Infinite);
+            player->play();
+        }
+        if(mus%4==1){
+            player->setAudioOutput(audioOutput);
+            player->setSource(QUrl("qrc:/images/Pixel Dreams.mp3"));
+            audioOutput->setVolume(50);
+            player->setLoops(QMediaPlayer::Infinite);
+            player->play();
+        }
+        if(mus%4==2){
+            player->setAudioOutput(audioOutput);
+            player->setSource(QUrl("qrc:/images/SHADXWBXRN - KNIGHT.mp3"));
+            audioOutput->setVolume(50);
+            player->setLoops(QMediaPlayer::Infinite);
+            player->play();
+        }
+        if(mus%4==3){
+            player->setAudioOutput(audioOutput);
+            player->setSource(QUrl("qrc:/images/Skrillex - Bangarang.mp3"));
+            audioOutput->setVolume(50);
+            player->setLoops(QMediaPlayer::Infinite);
+            player->play();
+        }
     }
 }
 
