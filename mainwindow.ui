@@ -331,6 +331,9 @@
       <height>75</height>
      </rect>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="text">
      <string/>
     </property>
@@ -379,6 +382,9 @@
     <property name="cursor">
      <cursorShape>OpenHandCursor</cursorShape>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="text">
      <string>SETTINGS</string>
     </property>
@@ -413,6 +419,9 @@
      <property name="cursor">
       <cursorShape>OpenHandCursor</cursorShape>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>RESTART GAME</string>
      </property>
@@ -431,6 +440,9 @@
      </property>
      <property name="cursor">
       <cursorShape>OpenHandCursor</cursorShape>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
      </property>
      <property name="text">
       <string>SOUND OFF</string>
@@ -451,6 +463,9 @@
      <property name="cursor">
       <cursorShape>OpenHandCursor</cursorShape>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>SOUND ON</string>
      </property>
@@ -470,6 +485,9 @@
      <property name="cursor">
       <cursorShape>OpenHandCursor</cursorShape>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>CHANGE BACKGROUND COLOR</string>
      </property>
@@ -488,6 +506,9 @@
      </property>
      <property name="cursor">
       <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
      </property>
      <property name="text">
       <string/>
@@ -515,6 +536,9 @@
        <height>75</height>
       </rect>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>EXIT GAME</string>
      </property>
@@ -531,8 +555,27 @@
        <height>75</height>
       </rect>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>CHAGE MUSIC</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="res_pr">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>50</y>
+       <width>200</width>
+       <height>75</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>RESET PROGRESS</string>
      </property>
     </widget>
    </widget>

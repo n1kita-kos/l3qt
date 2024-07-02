@@ -4,10 +4,11 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , isAnimationStarted(false)
+    , isAnimationStarted(0)
 {
     ui->setupUi(this);
 
+    ui->res_pr->hide();
 
     player2=new QMediaPlayer(this);
     video = new QVideoWidget(this);
@@ -37,15 +38,48 @@ MainWindow::MainWindow(QWidget *parent)
     upgradeTimer->setInterval(1000);
     connect(upgradeTimer, &QTimer::timeout, this, &MainWindow::onUpgradeTimeout);
 
-    QFile dtxt("data.txt");
     QFile dbin("data1.bin");
     //иконка покупки автокликера
     ic1.addFile(":/images/checkmark3.png", QSize(100, 100));
-
     if (dbin.open(QIODevice::ReadOnly)) {
         QDataStream binin(&dbin);
-        binin >> n >> k >> score >> aut >> cost >> cost2 >> cost3 >> cost4 >> reset >> mus>>str;
+        binin >> n >> k >> score >> aut1 >> cost >> cost2 >> cost3 >> cost4 >> reset >> mus>>aut>>upgr>>bustb>>str>>colname;
+        qDebug() << "Data loaded successfully: " << n << k << score << aut1 << cost << cost2 << cost3 << cost4 << reset << mus << str<<colname;
         dbin.close();
+    }
+    if(str==0){
+        n=1;
+        k=1;
+        score=0;
+        cost=100;
+        cost2=10000;
+        cost3=150;
+        cost4=1000;
+        aut1=1;
+        aut=0;
+        bustb=0;
+        reset=1;
+        mus=0;
+        plsn=0;
+        upgr=1;
+        stpd=0;
+        colname="rgb(224,255,255)";
+        ui->pr2->setFont(font);
+        ui->pr2->setText(QString::number(cost2));
+
+    }else{
+        if(aut1==0){
+            upgradeTimer->start();
+            ui->upgrade2->setText("");
+            ui->upgrade2->setIcon(ic1);
+            ui->upgrade2->setIconSize(QSize(81, 81));
+            ui->pr2->setText("-");
+            ui->autoplus->setFont(font);
+            ui->autoplus->setText(QString::number(k) + " auto");
+        }else{
+            ui->pr2->setFont(font);
+            ui->pr2->setText(QString::number(cost2));
+        }
     }
 
     //расставляю стоимость улучшений
@@ -53,42 +87,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->score->setText(QString::number(score));
     ui->pr1->setFont(font);
     ui->pr1->setText(QString::number(cost));
-    ui->pr2->setFont(font);
-    ui->pr2->setText(QString::number(cost2));
     ui->pr3->setFont(font);
     ui->pr3->setText(QString::number(cost3));
     ui->pr4->setFont(font);
     ui->pr4->setText(QString::number(cost4));
+    bool ok;
+    c1 = (ui->pr1->text()).toLongLong(&ok);
+    bool ok1;
+    c2 = (ui->pr2->text()).toLongLong(&ok1);
+    bool ok2;
+    c3 = (ui->pr3->text()).toLongLong(&ok2);
+    bool ok3;
+    c4 = (ui->pr4->text()).toLongLong(&ok3);
 
-    if(aut==1){
-        ui->upgrade2->setText("");
-        ui->upgrade2->setIcon(ic1);
-        ui->upgrade2->setIconSize(QSize(81, 81));
-        ui->pr2->setText("-");
-        ui->autoplus->setFont(font);
-        ui->autoplus->setText(QString::number(k) + " auto");
-        if (!upgradeTimer->isActive()) {
-            upgradeTimer->start();
-        }
-    }else{
-        ui->pr2->setFont(font);
-        ui->pr2->setText(QString::number(cost2));
-    }
-
-    if (str == 0) {
-        if (dtxt.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream txtin(&dtxt);
-            str++;
-            txtin >> n >> k >> score >> aut>> cost >> cost2 >> cost3 >> cost4 >> reset >> mus;
-            dtxt.close();
-        }
-
-        if (dbin.open(QIODevice::WriteOnly)) {
-            QDataStream binin(&dbin);
-            binin << n << k << score << aut << cost << cost2 << cost3 << cost4 << reset << mus;
-            dbin.close();
-        }
-    }
 
     ui->widget->hide();
     setFixedSize(1005,800);
@@ -112,9 +123,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->ex_sett->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->ex_game->setStyleSheet("background-color: rgb(255, 255, 255);");
     ui->ch_mus->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ui->res_pr->setStyleSheet("background-color: rgb(255, 255, 255);");
 
     //фон основного окна
-    this->setStyleSheet("QWidget#centralwidget { background-color: rgb(224, 255, 255); }");
+    if(str==0){
+        this->setStyleSheet(QString("QWidget#centralwidget { background-color: %1; }").arg(colname));
+    }else{
+        this->setStyleSheet(QString("QWidget#centralwidget { background-color: %1; }").arg(colname));
+    }
 
     //анимация основных сообщений игроку
     animation = new QPropertyAnimation(ui->warning, "geometry");
@@ -186,11 +202,18 @@ MainWindow::~MainWindow()
     QFile dbin("data1.bin");
     if (dbin.open(QIODevice::WriteOnly)) {
         QDataStream binin(&dbin);
-        binin << n << k << score << aut << cost << cost2 << cost3 << cost4 << reset << mus<<str;
+        if(bustb==1){
+            onUpgr2out();
+        }
+        str = 1;
+        binin << n << k << score << aut1 << c1 << c2 << c3 << c4 << reset << mus<<aut<<upgr <<bustb<< str<<colname;
         dbin.close();
+        qDebug() << "Data saved successfully";
+        qDebug() <<n << k << score << aut1 << cost << cost2 << cost3 << cost4 << reset << mus << str<<bustb<<c1<<c2<<c3<<c4<<aut<<plsn<<upgr<<stpd<<colname;
     }
     delete ui;
 }
+
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     qDebug() << event;
@@ -299,7 +322,6 @@ void MainWindow::hidefire(){
 void MainWindow::on_upgrade_clicked()
 {
     bool ok;
-    long long c1;
     c1 = (ui->pr1->text()).toLongLong(&ok);
     if (score >= c1) {
         if(bustb==1){
@@ -332,22 +354,21 @@ void MainWindow::on_upgrade_clicked()
 void MainWindow::on_upgrade2_clicked()
 {
     bool ok;
-    long long c2;
     c2 = (ui->pr2->text()).toLongLong(&ok);
     if (score >= c2) {
-        if (aut1) {
-            aut1 = false;
-            if (upgr && score >= c2) {
-                upgr = false;
+        if (aut1==1) {
+            aut1 = 0;
+            if (upgr==1 && score >= c2) {
+                upgr = 0;
                 if (score >= c2) {
                     score -= c2;
+                    c2=0;
                     ui->score->setText(QString::number(score));
 
                     if (!upgradeTimer->isActive()) {
                         upgradeTimer->start();
                     }
                 }
-                bustb=1;
                 ui->upgrade2->setText("");
                 ui->upgrade2->setIcon(ic1);
                 ui->upgrade2->setIconSize(QSize(81, 81));
@@ -387,7 +408,6 @@ void MainWindow::on_upgrade3_clicked()
 {
     if (aut==1) {
         bool ok;
-        long long c3;
         c3 = (ui->pr3->text()).toLongLong(&ok);
         if (score >= c3) {
             score -= c3;
@@ -398,6 +418,7 @@ void MainWindow::on_upgrade3_clicked()
             k++;
             ui->autoplus->setFont(font);
             ui->autoplus->setText(QString::number(k) + " auto");
+            upgradeTimer->start();
         } else {
             QFont f3;
             long long a = (c3 - score);
@@ -431,7 +452,6 @@ void MainWindow::onAnimationFinished()
 void MainWindow::on_upgrade4_clicked()
 {
     bool ok;
-    long long c4;
     c4 = (ui->pr4->text()).toLongLong(&ok);
     if ((!bustb)==1) {
         if (score >= c4) {
@@ -449,13 +469,13 @@ void MainWindow::on_upgrade4_clicked()
             upgr2_1_1->stop();
             timelf = 10;
 
-            if(stpd){
+            if(stpd==1){
                 upgr2->setInterval(10000);
             }
             upgr2->start();
 
             ui->plus->setStyleSheet("QLabel { color : yellow; }");
-            if(stpd){
+            if(stpd==1){
                 upgr2_1->setInterval(1000);
             }
             upgr2_1->start();
@@ -490,7 +510,7 @@ void MainWindow::onUpgr2out()
     ui->plus->setStyleSheet("QLabel { color : black; }");
     upgr2_1->stop();
     upgr2->stop();
-    if(stpd){
+    if(stpd==1){
         upgr2_1_1->setInterval(100);
     }
     upgr2_1_1->start();
@@ -502,7 +522,7 @@ void MainWindow::ont_1()
         ui->timeleft->setFont(font);
         ui->timeleft->setText(QString::number(timelf) + " sec left");
         timelf--;
-        if(stpd){
+        if(stpd==1){
             upgr2_1->setInterval(1000);
         }
         upgr2_1->start();
@@ -541,7 +561,7 @@ void MainWindow::on_ex_sett_clicked()
     ui->widget->hide();
     upgr2->start(rtime);
     upgr2_1->start(rtime2);
-    stpd=true;
+    stpd=1;
     upgr2_1_1->start(rtime3);
     moviegf->stop();
 }
@@ -567,7 +587,7 @@ void MainWindow::on_reset_clicked()
         reset++;
         upgr2->start(rtime);
         upgr2_1->start(rtime2);
-        stpd=true;
+        stpd=1;
         upgr2_1_1->start(rtime3);
         ui->widget->hide();
     }else{
@@ -575,7 +595,7 @@ void MainWindow::on_reset_clicked()
         QFont f3;
         upgr2->start(rtime);
         upgr2_1->start(rtime2);
-        stpd=true;
+        stpd=1;
         upgr2_1_1->start(rtime3);
         animation->start();
         long long a = ((1000000*(reset*2)) - score);
@@ -592,16 +612,14 @@ void MainWindow::on_reset_clicked()
 void MainWindow::on_changebackgr_clicked()
 {
     QColor color = QColorDialog::getColor(Qt::white, this, "Выберите цвет");
-
     if (color.isValid()) {
+        colname=color.name();
 
-        QString colorName = color.name();
-
-        this->setStyleSheet(QString("QWidget#centralwidget { background-color: %1; }").arg(colorName));
+        this->setStyleSheet(QString("QWidget#centralwidget { background-color: %1; }").arg(colname));
     }else{
         upgr2->start(rtime);
         upgr2_1->start(rtime2);
-        stpd=true;
+        stpd=1;
         upgr2_1_1->start(rtime3);
         QFont f3;
         f3.setPointSize(24);
@@ -630,7 +648,14 @@ void MainWindow::on_ex_game_clicked()
     QFile dbin("data1.bin");
     if (dbin.open(QIODevice::WriteOnly)) {
         QDataStream binin(&dbin);
-        binin << n << k << score << aut << cost << cost2 << cost3 << cost4 << reset << mus<<str;
+        if(bustb==1){
+            onUpgr2out();
+        }
+        str = 1;
+        binin << n << k << score << aut1 << c1 << c2 << c3 << c4 << reset << mus <<aut<<upgr<<bustb<< str<<colname;
+        dbin.close();
+        qDebug() << "Data saved successfully";
+        qDebug() <<n << k << score << aut1 << cost << cost2 << cost3 << cost4 << reset << mus << str<<bustb<<c1<<c2<<c3<<c4<<aut<<plsn<<upgr<<stpd<<colname;
         dbin.close();
     }
     QApplication::quit();
@@ -706,5 +731,12 @@ void MainWindow::onvideoout(QMediaPlayer::MediaStatus status)
             player->play();
         }
     }
+}
+
+
+void MainWindow::on_res_pr_clicked()
+{
+
+
 }
 

@@ -93,6 +93,8 @@ private slots:
     void on_ch_mus_clicked();
     void onvideoout(QMediaPlayer::MediaStatus status);
 
+    void on_res_pr_clicked();
+
 private:
     Ui::MainWindow *ui;
     QMediaPlayer *player;
@@ -115,13 +117,13 @@ private:
     QIcon ic3;//иконка для крестика
     QIcon ic4;//иконка монетки
     QColorDialog *col1;
-    bool stpd=false;
-    bool isAnimationStarted;
-    bool plsn=false;
-    bool upgr=true;
+    int stpd;
+    int isAnimationStarted;
+    int plsn;
+    int upgr;
     int aut;
-    bool aut1=true;
-    int bustb=0;//буст включен?
+    int aut1;
+    int bustb;//буст включен?
     long long score ;//начальный счет
     long long n ;//начальное значение клика
     long long n_1;//клон клика
@@ -144,6 +146,11 @@ private:
     QString colr;
     void HESOYAM();
     void color1();
+    long long c1;
+    long long c2;
+    long long c3;
+    long long c4;
+    QString colname;
 };
 
 
